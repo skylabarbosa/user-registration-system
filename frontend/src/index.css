@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #1d2424;
+}
+
+:root {
+  --primary: #0b6662;
+  --primary-dark: #084a47;
+  --background: #062f30;
+  --text: #1d2424;
+  --muted: #777f7f;
+  --border: #d9e0df;
+  --error: #d14343;
+  --success: #16834c;
+  --white: #ffffff;
+}
