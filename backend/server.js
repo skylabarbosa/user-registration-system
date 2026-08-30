@@ -8,30 +8,11 @@ const initializeDatabase = require("./database/initDatabase");
 
 const app = express();
 
-// CORS configuration
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://main.dx9b0mc91hz18.amplifyapp.com"
-];
-
-console.log("Allowed CORS origins:", allowedOrigins);
-
+// Enable CORS for frontend requests
 app.use(
   cors({
-    origin: function (origin, callback) {
-      console.log("Request origin:", origin);
-
-      // Allow requests without origin and allowed frontend origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      console.log("Blocked by CORS:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
-
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
@@ -50,10 +31,10 @@ app.get("/", (req, res) => {
   res.send("Registration backend is running");
 });
 
-// Render port
+// Use Render's PORT or local fallback
 const PORT = process.env.PORT || 5000;
 
-// Start database and server
+// Initialize database before starting server
 async function startServer() {
   try {
     await initializeDatabase();
@@ -71,4 +52,5 @@ async function startServer() {
   });
 }
 
+// Start server
 startServer();
