@@ -8,52 +8,61 @@ const initializeDatabase = require("./database/initDatabase");
 
 const app = express();
 
-// Allow requests from configured frontend origins.
-// In production, set FRONTEND_URL to your deployed frontend domain.
-// For multiple origins, use a comma-separated value.
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://main.dx9b0mc91hz18.amplifyapp.com"
+];
+
+console.log("Allowed CORS origins:", allowedOrigins);
 
 app.use(
   cors({
-    origin(origin, callback) {
+    origin: function (origin, callback) {
+      console.log("Request origin:", origin);
+
+      // Allow requests without origin and allowed frontend origins
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
+        return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      console.log("Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
+
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
-// Allows Express to read JSON data sent from React
+// Read JSON data
 app.use(express.json());
 
-// Pincode related routes
+// Pincode routes
 app.use("/api", pincodeRoutes);
 
-// Registration related routes
+// Registration routes
 app.use("/api", registrationRoutes);
 
-// Simple route to check whether the backend is running
+// Test route
 app.get("/", (req, res) => {
   res.send("Registration backend is running");
 });
 
-// Use PORT from environment (required for cloud platforms) with a local fallback
+// Render port
 const PORT = process.env.PORT || 5000;
 
-// Set up the database before starting the server
+// Start database and server
 async function startServer() {
   try {
     await initializeDatabase();
+    console.log("Database is ready");
   } catch (error) {
-    console.error("Fatal: could not initialize database. Exiting.", error.message);
+    console.error(
+      "Fatal: could not initialize database.",
+      error.message
+    );
     process.exit(1);
   }
 
