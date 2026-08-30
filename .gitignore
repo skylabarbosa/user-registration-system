@@ -22,6 +22,7 @@ frontend/build/
 backend/dist/
 backend/build/
 dist-ssr/
+*.zip
 
 # Logs
 logs/
